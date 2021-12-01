@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  name  String
+  username String
+  picture String
+  token  String @unique
+  role  Role   @default(USER)
+}
+
+model Patient {
+  id           Int           @id @default(autoincrement())
+  name         String
+  diagonsis    Diagnosis[]
+  description  String
+  email        String        @unique
+  phone        String
+  address      String
+  admit_date   DateTime
+  dischg_date  DateTime
+  appointments Appointment[]
+  created_at   DateTime      @default(now())
+  updated_at   DateTime
+}
+
+model Appointment {
+  id         Int         @id @default(autoincrement())
+  startTime  DateTime
+  endTime    DateTime
+  patient    Patient     @relation(fields: [patient_id], references: [id])
+  patient_id Int
+  doctor     Doctor      @relation(fields: [doctor_id], references: [id])
+  doctor_id  Int
+  // diagnosis Diagnosis
+  created_at DateTime    @default(now())
+  updated_at DateTime
+  Diagnosis  Diagnosis[]
+}
+
+model Doctor {
+  id             Int           @id @default(autoincrement())
+  first_name     String
+  last_name      String
+  email          String        @unique
+  phone          String
+  address        String
+  specialization String
+  diagonsis_done Diagnosis[]
+  role           Role          @default(JUNIOR_DOCTOR)
+  appointments   Appointment[]
+}
+
+enum Role {
+  ADMIN
+  USER
+  PATIENT
+  SENIOR_DOCTOR
+  JUNIOR_DOCTOR
+  INTERN
+}
+
+model Medication {
+  id              Int    @id @default(autoincrement())
+  medication_name String
+  medication_cost Int
+  details         String
+}
+
+model Diagnosis {
+  id                Int          @id @default(autoincrement())
+  patient           Patient      @relation(fields: [patient_id], references: [id])
+  appointment       Appointment? @relation(fields: [appointment_id], references: [id])
+  doctor            Doctor       @relation(fields: [doctor_id], references: [id])
+  patient_id        Int
+  appointment_id    Int
+  doctor_id         Int
+  treatment_process String
+  treatment_time    Int
+  billing_rate      Int
+}

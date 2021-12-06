@@ -30,7 +30,7 @@ exports.createUser = async (req: Request, res: Response) => {
     } catch (e) {
         res.status(401).send('Some error happened while logging in.')
     }
-
-
 }
-``
+
+
+

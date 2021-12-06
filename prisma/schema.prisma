@@ -11,14 +11,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model User {  
   id    Int    @id @default(autoincrement())
   email String @unique
   name  String
-  username String
-  picture String
-  token  String @unique
+  username String?
+  picture String?
+  user_details UserDetails?
+  token  String? @unique
   role  Role   @default(USER)
+}
+
+
+model UserDetails{
+  user    User     @relation(fields: [user_id], references: [id])
+  user_id Int 
+  email String  @unique
+  phone_no String 
+  address String
+  previous_history String?
+  prev_appointments String?
+  patient Boolean
 }
 
 model Patient {
@@ -39,15 +52,16 @@ model Patient {
 model Appointment {
   id         Int         @id @default(autoincrement())
   startTime  DateTime
-  endTime    DateTime
+  details    String
+  endTime    DateTime?
   patient    Patient     @relation(fields: [patient_id], references: [id])
   patient_id Int
   doctor     Doctor      @relation(fields: [doctor_id], references: [id])
   doctor_id  Int
   // diagnosis Diagnosis
   created_at DateTime    @default(now())
-  updated_at DateTime
-  Diagnosis  Diagnosis[]
+  updated_at DateTime?
+  diagnosis  Diagnosis
 }
 
 model Doctor {
